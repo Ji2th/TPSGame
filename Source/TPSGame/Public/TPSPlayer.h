@@ -38,4 +38,13 @@ public:
 
 	void OnAxisLookUp(float value);
 	void OnAxisTurn(float value);
+
+	// 키를 입력받아서 방향을 만들고 그 방향으로 이동하고싶다.
+	// 점프 버튼을 누르면 점프하고싶다.
+	FVector dir;
+	float walkSpeed = 600;
+	void OnAxisMoveForward(float value);
+	void OnAxisMoveRight(float value);
+
+	void OnActionJump();
 };

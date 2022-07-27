@@ -6,6 +6,6 @@
 
 ATPSGameGameModeBase::ATPSGameGameModeBase()
 {
-	PRINT_LOG(TEXT("Hello"));
+	PRINT_LOG(TEXT("Hello %s"), TEXT("World!"));
 	
 }
