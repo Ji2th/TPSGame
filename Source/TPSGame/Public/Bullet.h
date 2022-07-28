@@ -29,4 +29,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* meshComp;
+
+	// 발사체이동관련 컴포넌트를 이용해서 이동하고싶다.
+	UPROPERTY(EditAnywhere)
+	class UProjectileMovementComponent* movementComp;
 };

@@ -47,4 +47,29 @@ public:
 	void OnAxisMoveRight(float value);
 
 	void OnActionJump();
+
+	// 마우스 왼쪽 버튼을 누르면 총알공장에서 총알을 만들어서 총구위치에 배치하고싶다.
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class ABullet> bulletFactory;
+
+	UPROPERTY(EditAnywhere)
+	class USkeletalMeshComponent* gunMesh;
+
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* sniperMesh;
+
+	void OnActionFire();
+
+
+	// 1, 2 버튼을 누르면 총이 교체되도록 하고싶다.
+	bool bChooseGun = true;
+	void OnActionChooseGun();
+	void OnActionChooseSniper();
+
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* bulletImpactFactory;
+
+	void OnActionZoomIn();
+	void OnActionZoomOut();
+
 };
