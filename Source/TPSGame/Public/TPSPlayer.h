@@ -72,4 +72,23 @@ public:
 	void OnActionZoomIn();
 	void OnActionZoomOut();
 
+	// 태어날 때 SniperUI공장에서 SniperUI를 만들어서 가지고 있고싶다.
+	// ZoomIn : SniperUI를 보이게 하고싶다. 
+	// ZoomOut : SniperUI를 보이지 않게 하고싶다. 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> sniperUIFactory;
+
+	UPROPERTY()
+	class UUserWidget* sniperUI;
+
+	// 태어날 때 CrosshairUI공장에서 CrosshairUI를 만들어서 가지고 있고싶다.
+	// Sniper를 선택하면 CrosshairUI를 보이게 하고싶다.
+	// ZoomIn : CrosshairUI를 보이지 않게 하고싶다. 
+	// ZoomOut : CrosshairUI를 보이게 하고싶다. 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UUserWidget> crosshairUIFactory= nullptr;
+
+	UPROPERTY()
+	class UUserWidget* crosshairUI;
+
 };

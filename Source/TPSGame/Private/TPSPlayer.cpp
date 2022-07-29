@@ -6,6 +6,7 @@
 #include <Components/SkeletalMeshComponent.h>
 #include "Bullet.h"
 #include <Kismet/GameplayStatics.h>
+#include <Blueprint/UserWidget.h>
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -61,7 +62,6 @@ ATPSPlayer::ATPSPlayer()
 		sniperMesh->SetRelativeLocation(FVector(-22, 55, 120));
 		sniperMesh->SetRelativeScale3D(FVector(0.15f));
 	}
-
 }
 
 // Called when the game starts or when spawned
@@ -69,8 +69,13 @@ void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnActionChooseGun();
+	// 태어날 때 SniperUI공장에서 SniperUI를 만들어서 가지고 있고싶다.
+	sniperUI = CreateWidget(GetWorld(), sniperUIFactory);
+	// 태어날 때 CrosshairUI공장에서 CrosshairUI를 만들어서 가지고 있고싶다.
+	crosshairUI = CreateWidget(GetWorld(), crosshairUIFactory);
 	JumpMaxCount = 2;
+
+	OnActionChooseSniper();
 }
 
 // Called every frame
@@ -80,6 +85,7 @@ void ATPSPlayer::Tick(float DeltaTime)
 
 	// dir방향으로 이동하고싶다.
 	dir = FTransform(GetControlRotation()).TransformVector(dir);
+	dir.Z = 0; // 수직으로 아래를 보더라도 이동하려면...
 	dir.Normalize();
 	//// P = P0 + vt
 	//FVector velocity = dir * walkSpeed;
@@ -168,12 +174,9 @@ void ATPSPlayer::OnActionFire()
 			auto hitComp = hitInfo.GetComponent();
 			if (hitComp && hitComp->IsSimulatingPhysics())
 			{
-				hitComp->AddForce(hitComp->GetMass() * -hitInfo.ImpactNormal * 100000);
+				hitComp->AddForceAtLocation(hitComp->GetMass() * -hitInfo.ImpactNormal * 100000, hitInfo.ImpactPoint);
 			}
-
-
 		}
-
 	}
 }
 void ATPSPlayer::OnActionChooseGun()
@@ -184,6 +187,8 @@ void ATPSPlayer::OnActionChooseGun()
 	sniperMesh->SetVisibility(false);
 	cameraComp->SetFieldOfView(90);
 
+	crosshairUI->RemoveFromParent();
+	sniperUI->RemoveFromViewport();
 }
 void ATPSPlayer::OnActionChooseSniper()
 {
@@ -191,6 +196,8 @@ void ATPSPlayer::OnActionChooseSniper()
 	bChooseGun = false;
 	gunMesh->SetVisibility(false);
 	sniperMesh->SetVisibility(true);
+	// Sniper를 선택하면 CrosshairUI를 보이게 하고싶다.
+	crosshairUI->AddToViewport();
 }
 
 void ATPSPlayer::OnActionZoomIn()
@@ -199,6 +206,9 @@ void ATPSPlayer::OnActionZoomIn()
 	if (false == bChooseGun)
 	{
 		cameraComp->SetFieldOfView(30);
+		// ZoomIn : SniperUI를 보이게 하고싶다. 
+		sniperUI->AddToViewport();
+		crosshairUI->RemoveFromParent();
 	}
 }
 
@@ -207,6 +217,9 @@ void ATPSPlayer::OnActionZoomOut()
 	if (false == bChooseGun)
 	{
 		cameraComp->SetFieldOfView(90);
+		// ZoomOut : SniperUI를 보이지 않게 하고싶다. 
+		sniperUI->RemoveFromParent();
+		crosshairUI->AddToViewport();
 	}
 }
 
