@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -27,8 +27,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	// SpringArmComponent, CameraComponent ¸¦ ¸¸µé¾î¼­ ºÙÀÌ°í½Í´Ù.
-	// CameraComponentÀ» SpringArmComponentÀÇ ÀÚ½ÄÀ¸·Î ºÙÀÌ°í½Í´Ù.
+	// SpringArmComponent, CameraComponent ë¥¼ ë§Œë“¤ì–´ì„œ ë¶™ì´ê³ ì‹¶ë‹¤.
+	// CameraComponentì„ SpringArmComponentì˜ ìì‹ìœ¼ë¡œ ë¶™ì´ê³ ì‹¶ë‹¤.
 
 	UPROPERTY(EditAnywhere)
 	class USpringArmComponent* springArmComp;
@@ -39,8 +39,8 @@ public:
 	void OnAxisLookUp(float value);
 	void OnAxisTurn(float value);
 
-	// Å°¸¦ ÀÔ·Â¹Ş¾Æ¼­ ¹æÇâÀ» ¸¸µé°í ±× ¹æÇâÀ¸·Î ÀÌµ¿ÇÏ°í½Í´Ù.
-	// Á¡ÇÁ ¹öÆ°À» ´©¸£¸é Á¡ÇÁÇÏ°í½Í´Ù.
+	// í‚¤ë¥¼ ì…ë ¥ë°›ì•„ì„œ ë°©í–¥ì„ ë§Œë“¤ê³  ê·¸ ë°©í–¥ìœ¼ë¡œ ì´ë™í•˜ê³ ì‹¶ë‹¤.
+	// ì í”„ ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ ì í”„í•˜ê³ ì‹¶ë‹¤.
 	FVector dir;
 	float walkSpeed = 600;
 	void OnAxisMoveForward(float value);
@@ -48,7 +48,7 @@ public:
 
 	void OnActionJump();
 
-	// ¸¶¿ì½º ¿ŞÂÊ ¹öÆ°À» ´©¸£¸é ÃÑ¾Ë°øÀå¿¡¼­ ÃÑ¾ËÀ» ¸¸µé¾î¼­ ÃÑ±¸À§Ä¡¿¡ ¹èÄ¡ÇÏ°í½Í´Ù.
+	// ë§ˆìš°ìŠ¤ ì™¼ìª½ ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ ì´ì•Œê³µì¥ì—ì„œ ì´ì•Œì„ ë§Œë“¤ì–´ì„œ ì´êµ¬ìœ„ì¹˜ì— ë°°ì¹˜í•˜ê³ ì‹¶ë‹¤.
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class ABullet> bulletFactory;
 
@@ -61,7 +61,7 @@ public:
 	void OnActionFire();
 
 
-	// 1, 2 ¹öÆ°À» ´©¸£¸é ÃÑÀÌ ±³Ã¼µÇµµ·Ï ÇÏ°í½Í´Ù.
+	// 1, 2 ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ ì´ì´ êµì²´ë˜ë„ë¡ í•˜ê³ ì‹¶ë‹¤.
 	bool bChooseGun = true;
 	void OnActionChooseGun();
 	void OnActionChooseSniper();
@@ -72,19 +72,19 @@ public:
 	void OnActionZoomIn();
 	void OnActionZoomOut();
 
-	// ÅÂ¾î³¯ ¶§ SniperUI°øÀå¿¡¼­ SniperUI¸¦ ¸¸µé¾î¼­ °¡Áö°í ÀÖ°í½Í´Ù.
-	// ZoomIn : SniperUI¸¦ º¸ÀÌ°Ô ÇÏ°í½Í´Ù. 
-	// ZoomOut : SniperUI¸¦ º¸ÀÌÁö ¾Ê°Ô ÇÏ°í½Í´Ù. 
+	// íƒœì–´ë‚  ë•Œ SniperUIê³µì¥ì—ì„œ SniperUIë¥¼ ë§Œë“¤ì–´ì„œ ê°€ì§€ê³  ìˆê³ ì‹¶ë‹¤.
+	// ZoomIn : SniperUIë¥¼ ë³´ì´ê²Œ í•˜ê³ ì‹¶ë‹¤. 
+	// ZoomOut : SniperUIë¥¼ ë³´ì´ì§€ ì•Šê²Œ í•˜ê³ ì‹¶ë‹¤. 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> sniperUIFactory;
 
 	UPROPERTY()
 	class UUserWidget* sniperUI;
 
-	// ÅÂ¾î³¯ ¶§ CrosshairUI°øÀå¿¡¼­ CrosshairUI¸¦ ¸¸µé¾î¼­ °¡Áö°í ÀÖ°í½Í´Ù.
-	// Sniper¸¦ ¼±ÅÃÇÏ¸é CrosshairUI¸¦ º¸ÀÌ°Ô ÇÏ°í½Í´Ù.
-	// ZoomIn : CrosshairUI¸¦ º¸ÀÌÁö ¾Ê°Ô ÇÏ°í½Í´Ù. 
-	// ZoomOut : CrosshairUI¸¦ º¸ÀÌ°Ô ÇÏ°í½Í´Ù. 
+	// íƒœì–´ë‚  ë•Œ CrosshairUIê³µì¥ì—ì„œ CrosshairUIë¥¼ ë§Œë“¤ì–´ì„œ ê°€ì§€ê³  ìˆê³ ì‹¶ë‹¤.
+	// Sniperë¥¼ ì„ íƒí•˜ë©´ CrosshairUIë¥¼ ë³´ì´ê²Œ í•˜ê³ ì‹¶ë‹¤.
+	// ZoomIn : CrosshairUIë¥¼ ë³´ì´ì§€ ì•Šê²Œ í•˜ê³ ì‹¶ë‹¤. 
+	// ZoomOut : CrosshairUIë¥¼ ë³´ì´ê²Œ í•˜ê³ ì‹¶ë‹¤. 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UUserWidget> crosshairUIFactory= nullptr;
 

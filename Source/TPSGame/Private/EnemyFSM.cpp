@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "EnemyFSM.h"
@@ -47,16 +47,16 @@ void UEnemyFSM::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 void UEnemyFSM::TickIdle()
 {
-	// ½Ã°£ÀÌ Èå¸£´Ù°¡
+	// ì‹œê°„ì´ íë¥´ë‹¤ê°€
 	currentTime += GetWorld()->GetDeltaSeconds();
-	// ÇöÀç½Ã°£ÀÌ idleDelayTimeÀ» ÃÊ°úÇÏ¸é
+	// í˜„ì¬ì‹œê°„ì´ idleDelayTimeì„ ì´ˆê³¼í•˜ë©´
 	if (currentTime > idleDelayTime)
 	{
 		currentTime = 0;
-		// ¸ñÀûÁö¸¦ Á¤ÇÏ°í
+		// ëª©ì ì§€ë¥¼ ì •í•˜ê³ 
 		/*target = Cast<ATPSPlayer>(UGameplayStatics::GetActorOfClass(GetWorld(), ATPSPlayer::StaticClass()));*/
 		target = Cast<ATPSPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
-		// ÀÌµ¿»óÅÂ·Î ÀüÀÌÇÏ°í½Í´Ù.
+		// ì´ë™ìƒíƒœë¡œ ì „ì´í•˜ê³ ì‹¶ë‹¤.
 		state = EEnemyState::MOVE;
 		PRINT_LOG(TEXT("MOVE"));
 	}
@@ -64,17 +64,17 @@ void UEnemyFSM::TickIdle()
 
 void UEnemyFSM::TickMove()
 {
-	// ¸ñÀûÁö¸¦ ÇâÇÏ´Â ¹æÇâÀ» ¸¸µé°í target - me
+	// ëª©ì ì§€ë¥¼ í–¥í•˜ëŠ” ë°©í–¥ì„ ë§Œë“¤ê³  target - me
 	FVector dir = target->GetActorLocation() - me->GetActorLocation();
-	// ±× ¹æÇâÀ¸·Î ÀÌµ¿ÇÏ°í½Í´Ù.
+	// ê·¸ ë°©í–¥ìœ¼ë¡œ ì´ë™í•˜ê³ ì‹¶ë‹¤.
 	me->AddMovementInput(dir.GetSafeNormal());
 
-	// ¸ñÀûÁö¿Í ³ªÀÇ °Å¸®¸¦ ±¸ÇÏ°í
+	// ëª©ì ì§€ì™€ ë‚˜ì˜ ê±°ë¦¬ë¥¼ êµ¬í•˜ê³ 
 	float dist = dir.Size();
 	/*float dist = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());*/
-	// ¸¸¾à °Å¸®°¡ attackRangeÀÌÇÏ¶ó¸é
+	// ë§Œì•½ ê±°ë¦¬ê°€ attackRangeì´í•˜ë¼ë©´
 	if (dist <= attackRange) {
-		// °ø°İ»óÅÂ·Î ÀüÀÌÇÏ°í½Í´Ù.
+		// ê³µê²©ìƒíƒœë¡œ ì „ì´í•˜ê³ ì‹¶ë‹¤.
 		state = EEnemyState::ATTACK;
 		PRINT_LOG(TEXT("ATTACK"));
 	}
@@ -82,22 +82,22 @@ void UEnemyFSM::TickMove()
 
 void UEnemyFSM::TickAttack()
 {
-	// °ø°İ»óÅÂ°¡ µÇ¾úÀ»¶§ ½Ã°£ÀÌ Èå¸£´Ù°¡ 
+	// ê³µê²©ìƒíƒœê°€ ë˜ì—ˆì„ë•Œ ì‹œê°„ì´ íë¥´ë‹¤ê°€ 
 	currentTime += GetWorld()->GetDeltaSeconds();
-	// °ø°İ´ë±â½Ã°£À» ÃÊ°úÇÏ¸é °ø°İÇÏ°í½Í´Ù.
+	// ê³µê²©ëŒ€ê¸°ì‹œê°„ì„ ì´ˆê³¼í•˜ë©´ ê³µê²©í•˜ê³ ì‹¶ë‹¤.
 	if (currentTime > attackDelayTime)
 	{
-		// ¸¸¾à Å¸°ÙÀÌ °ø°İ»çÁ¤°Å¸® ¾È¿¡ ÀÖÁö¾Ê´Ù¸é(µÎ À§Ä¡ÀÇ °Å¸®¸¦ ±¸ÇÏ°í, °Å¸® > attackRange) 
+		// ë§Œì•½ íƒ€ê²Ÿì´ ê³µê²©ì‚¬ì •ê±°ë¦¬ ì•ˆì— ìˆì§€ì•Šë‹¤ë©´(ë‘ ìœ„ì¹˜ì˜ ê±°ë¦¬ë¥¼ êµ¬í•˜ê³ , ê±°ë¦¬ > attackRange) 
 		float dist = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
 		if (dist > attackRange)
 		{
-			//	ÀÌµ¿»óÅÂ·Î ÀüÀÌÇÏ°í½Í´Ù.
+			//	ì´ë™ìƒíƒœë¡œ ì „ì´í•˜ê³ ì‹¶ë‹¤.
 			state = EEnemyState::MOVE;
 			PRINT_LOG(TEXT("MOVE"));
 		}
-		else // ±×·¸Áö ¾Ê´Ù¸é
+		else // ê·¸ë ‡ì§€ ì•Šë‹¤ë©´
 		{
-			//	°ø°İÇÏ°í½Í´Ù.
+			//	ê³µê²©í•˜ê³ ì‹¶ë‹¤.
 			PRINT_LOG(TEXT("ATTACK!!!"));
 		}
 
@@ -115,9 +115,9 @@ void UEnemyFSM::TickDie()
 
 void UEnemyFSM::OnTakeDamage()
 {
-	// ÇÃ·¹ÀÌ¾î°¡ ³ª¸¦ °ø°İÇÏ¸é ÇÔ¼ö¸¦ È£ÃâÇØ¼­ Ã¼·ÂÀ» 1 °¨¼Ò½ÃÅ°°í½Í´Ù.
+	// í”Œë ˆì´ì–´ê°€ ë‚˜ë¥¼ ê³µê²©í•˜ë©´ í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•´ì„œ ì²´ë ¥ì„ 1 ê°ì†Œì‹œí‚¤ê³ ì‹¶ë‹¤.
 	hp--;
-	// ¸¸¾à Ã¼·ÂÀÌ 0ÀÌµÇ¸é Á×°í½Í´Ù.
+	// ë§Œì•½ ì²´ë ¥ì´ 0ì´ë˜ë©´ ì£½ê³ ì‹¶ë‹¤.
 	if (hp <= 0)
 	{
 		me->Destroy();

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -42,7 +42,7 @@ public:
 	float currentTime;
 	float idleDelayTime = 1;
 	float attackRange = 300;
-	// °ø°İ»óÅÂ°¡ µÇ¾úÀ»¶§ ½Ã°£ÀÌ Èå¸£´Ù°¡ °ø°İ´ë±â½Ã°£À» ÃÊ°úÇÏ¸é °ø°İÇÏ°í½Í´Ù.
+	// ê³µê²©ìƒíƒœê°€ ë˜ì—ˆì„ë•Œ ì‹œê°„ì´ íë¥´ë‹¤ê°€ ê³µê²©ëŒ€ê¸°ì‹œê°„ì„ ì´ˆê³¼í•˜ë©´ ê³µê²©í•˜ê³ ì‹¶ë‹¤.
 	float attackDelayTime = 1;
 	class ATPSPlayer* target;
 		
@@ -52,7 +52,7 @@ public:
 	void TickDamage();
 	void TickDie();
 
-	// ÇÃ·¹ÀÌ¾î°¡ È£ÃâÇÏ´Â ÀÌº¥Æ® ÇÔ¼ö´Ù.
+	// í”Œë ˆì´ì–´ê°€ í˜¸ì¶œí•˜ëŠ” ì´ë²¤íŠ¸ í•¨ìˆ˜ë‹¤.
 	void OnTakeDamage();
 
 	int hp = 3;

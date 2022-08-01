@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Bullet.h"
@@ -20,9 +20,9 @@ ABullet::ABullet()
 	meshComp->SetRelativeScale3D(FVector(0.625f));
 
 	movementComp = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("movementComp"));
-	// ÀÌµ¿ÇÒ¶§ ÁÂÇ¥¸¦ µ¿±âÈ­ÇÒ ÄÄÆ÷³ÍÆ®¸¦ ÁöÁ¤ÇÏ°í½Í´Ù.
+	// ì´ë™í• ë•Œ ì¢Œí‘œë¥¼ ë™ê¸°í™”í•  ì»´í¬ë„ŒíŠ¸ë¥¼ ì§€ì •í•˜ê³ ì‹¶ë‹¤.
 	movementComp->SetUpdatedComponent(collisionComp);
-	// ÀÌµ¿ÇÏ±âÀ§ÇÑ Á¤º¸¸¦ ¼³Á¤ÇÏ°í½Í´Ù. velocity  Å©±â
+	// ì´ë™í•˜ê¸°ìœ„í•œ ì •ë³´ë¥¼ ì„¤ì •í•˜ê³ ì‹¶ë‹¤. velocity  í¬ê¸°
 	movementComp->InitialSpeed = 5000;
 	movementComp->MaxSpeed = 5000;
 	movementComp->bShouldBounce = true;

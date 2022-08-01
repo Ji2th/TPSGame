@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Enemy.h"
 #include "EnemyFSM.h"
@@ -13,7 +13,7 @@ AEnemy::AEnemy()
 
 	if (tempMesh.Succeeded())
 	{
-		// ÀÐ¾îµéÀÎ USkeletalMesh¸¦ USkeletalMeshComponent¿¡ Àû¿ëÇÏ°í½Í´Ù.
+		// ì½ì–´ë“¤ì¸ USkeletalMeshë¥¼ USkeletalMeshComponentì— ì ìš©í•˜ê³ ì‹¶ë‹¤.
 		GetMesh()->SetSkeletalMesh(tempMesh.Object);
 		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -90), FRotator(0, -90, 0));
 	}
