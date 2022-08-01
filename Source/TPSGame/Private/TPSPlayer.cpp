@@ -7,6 +7,8 @@
 #include "Bullet.h"
 #include <Kismet/GameplayStatics.h>
 #include <Blueprint/UserWidget.h>
+#include "Enemy.h"
+#include "EnemyFSM.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -30,7 +32,7 @@ ATPSPlayer::ATPSPlayer()
 	springArmComp->bUsePawnControlRotation = true;
 	cameraComp->bUsePawnControlRotation = false;
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("SkeletalMesh'/Game/Mannequin/Character/Mesh/SK_Mannequin.SK_Mannequin'"));
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tempMesh(TEXT("SkeletalMesh'/Game/AnimStarterPack/UE4_Mannequin/Mesh/SK_Mannequin.SK_Mannequin'"));
 
 	if (tempMesh.Succeeded())
 	{
@@ -175,6 +177,17 @@ void ATPSPlayer::OnActionFire()
 			if (hitComp && hitComp->IsSimulatingPhysics())
 			{
 				hitComp->AddForceAtLocation(hitComp->GetMass() * -hitInfo.ImpactNormal * 100000, hitInfo.ImpactPoint);
+			}
+
+			// 만약 부딪힌 상대가 AEnemy라면
+			auto enemy = Cast<AEnemy>(hitInfo.GetActor());
+			if (nullptr != enemy)
+			{
+				// AEnemy의 OnTakeDamage()를 호출하고싶다.
+				auto comp = enemy->GetComponentByClass(UEnemyFSM::StaticClass());
+				auto fsm = Cast<UEnemyFSM>(comp);
+
+				fsm->OnTakeDamage();
 			}
 		}
 	}

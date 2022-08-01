@@ -42,6 +42,8 @@ public:
 	float currentTime;
 	float idleDelayTime = 1;
 	float attackRange = 300;
+	// 공격상태가 되었을때 시간이 흐르다가 공격대기시간을 초과하면 공격하고싶다.
+	float attackDelayTime = 1;
 	class ATPSPlayer* target;
 		
 	void TickIdle();
@@ -49,4 +51,10 @@ public:
 	void TickAttack();
 	void TickDamage();
 	void TickDie();
+
+	// 플레이어가 호출하는 이벤트 함수다.
+	void OnTakeDamage();
+
+	int hp = 3;
+
 };

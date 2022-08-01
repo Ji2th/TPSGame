@@ -82,6 +82,27 @@ void UEnemyFSM::TickMove()
 
 void UEnemyFSM::TickAttack()
 {
+	// 공격상태가 되었을때 시간이 흐르다가 
+	currentTime += GetWorld()->GetDeltaSeconds();
+	// 공격대기시간을 초과하면 공격하고싶다.
+	if (currentTime > attackDelayTime)
+	{
+		// 만약 타겟이 공격사정거리 안에 있지않다면(두 위치의 거리를 구하고, 거리 > attackRange) 
+		float dist = FVector::Distance(target->GetActorLocation(), me->GetActorLocation());
+		if (dist > attackRange)
+		{
+			//	이동상태로 전이하고싶다.
+			state = EEnemyState::MOVE;
+			PRINT_LOG(TEXT("MOVE"));
+		}
+		else // 그렇지 않다면
+		{
+			//	공격하고싶다.
+			PRINT_LOG(TEXT("ATTACK!!!"));
+		}
+
+		currentTime = 0;
+	}
 }
 
 void UEnemyFSM::TickDamage()
@@ -90,5 +111,16 @@ void UEnemyFSM::TickDamage()
 
 void UEnemyFSM::TickDie()
 {
+}
+
+void UEnemyFSM::OnTakeDamage()
+{
+	// 플레이어가 나를 공격하면 함수를 호출해서 체력을 1 감소시키고싶다.
+	hp--;
+	// 만약 체력이 0이되면 죽고싶다.
+	if (hp <= 0)
+	{
+		me->Destroy();
+	}
 }
 
