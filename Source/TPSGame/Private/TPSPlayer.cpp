@@ -9,6 +9,8 @@
 #include <Blueprint/UserWidget.h>
 #include "Enemy.h"
 #include "EnemyFSM.h"
+#include <GameFramework/CharacterMovementComponent.h>
+#include "TPSPlayerAnim.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -71,6 +73,9 @@ void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// 시작할 때 최대속력을 walkSpeed로 하고싶다.
+	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+
 	// 태어날 때 SniperUI공장에서 SniperUI를 만들어서 가지고 있고싶다.
 	sniperUI = CreateWidget(GetWorld(), sniperUIFactory);
 	// 태어날 때 CrosshairUI공장에서 CrosshairUI를 만들어서 가지고 있고싶다.
@@ -115,6 +120,9 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Pressed, this, &ATPSPlayer::OnActionZoomIn);
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Released, this, &ATPSPlayer::OnActionZoomOut);
+
+	PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &ATPSPlayer::OnActionRunPressed);
+	PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &ATPSPlayer::OnActionRunReleased);
 }
 
 void ATPSPlayer::OnAxisLookUp(float value)
@@ -148,6 +156,12 @@ void ATPSPlayer::OnActionJump()
 
 void ATPSPlayer::OnActionFire()
 {
+	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake);
+
+	// 메시로부터 애니메이션인스턴스를 가져와서 공격애니메이션을 호출하고싶다.
+	auto anim = Cast<UTPSPlayerAnim>(GetMesh()->GetAnimInstance());
+	anim->PlayAttackAnimation();
+
 	if (bChooseGun)
 	{
 		// gun을 고른 상태에서 총을 쏘고싶다.
@@ -234,5 +248,17 @@ void ATPSPlayer::OnActionZoomOut()
 		sniperUI->RemoveFromParent();
 		crosshairUI->AddToViewport();
 	}
+}
+
+void ATPSPlayer::OnActionRunPressed()
+{
+	GetCharacterMovement()->MaxWalkSpeed = runSpeed;
+
+}
+
+void ATPSPlayer::OnActionRunReleased()
+{
+	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+
 }
 

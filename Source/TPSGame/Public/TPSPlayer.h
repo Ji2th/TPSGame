@@ -42,7 +42,6 @@ public:
 	// 키를 입력받아서 방향을 만들고 그 방향으로 이동하고싶다.
 	// 점프 버튼을 누르면 점프하고싶다.
 	FVector dir;
-	float walkSpeed = 600;
 	void OnAxisMoveForward(float value);
 	void OnAxisMoveRight(float value);
 
@@ -91,4 +90,14 @@ public:
 	UPROPERTY()
 	class UUserWidget* crosshairUI;
 
+	// 왼쪽 쉬프트 버튼을 누르면 달리고싶다. 떼면 걷고싶다.
+	// 시작할 때 최대속력을 walkSpeed로 하고싶다.
+	float walkSpeed = 200;
+	float runSpeed = 600;
+	void OnActionRunPressed();
+	void OnActionRunReleased();
+
+	// 총을 쏘면 카메라를 흔들고싶다.
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UCameraShakeBase> cameraShake;
 };

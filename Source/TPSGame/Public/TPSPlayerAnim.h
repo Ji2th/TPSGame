@@ -25,4 +25,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool isInAir;
+
+	UPROPERTY(EditAnywhere)
+	class UAnimMontage* attackAnimMontage;
+
+	void PlayAttackAnimation();
 };

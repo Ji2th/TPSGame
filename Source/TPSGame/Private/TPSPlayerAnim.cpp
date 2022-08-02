@@ -25,3 +25,8 @@ void UTPSPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 		//PRINT_LOG(TEXT("%f, %f"), speedForward, speedRight);
 	}
 }
+
+void UTPSPlayerAnim::PlayAttackAnimation()
+{
+	Montage_Play(attackAnimMontage);
+}
