@@ -6,6 +6,7 @@
 #include "TPSPlayer.h"
 #include <Kismet/GameplayStatics.h>
 #include "Enemy.h"
+#include "EnemyAnim.h"
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -26,6 +27,8 @@ void UEnemyFSM::BeginPlay()
 	state = EEnemyState::IDLE;
 
 	me = Cast<AEnemy>(GetOwner());
+
+	anim = Cast<UEnemyAnim>(me->GetMesh()->GetAnimInstance());
 }
 
 
@@ -58,6 +61,7 @@ void UEnemyFSM::TickIdle()
 		target = Cast<ATPSPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
 		// 이동상태로 전이하고싶다.
 		state = EEnemyState::MOVE;
+		anim->animState = state;
 		PRINT_LOG(TEXT("MOVE"));
 	}
 }
@@ -76,6 +80,8 @@ void UEnemyFSM::TickMove()
 	if (dist <= attackRange) {
 		// 공격상태로 전이하고싶다.
 		state = EEnemyState::ATTACK;
+		anim->animState = state;
+		currentTime = attackDelayTime;
 		PRINT_LOG(TEXT("ATTACK"));
 	}
 }
@@ -93,12 +99,15 @@ void UEnemyFSM::TickAttack()
 		{
 			//	이동상태로 전이하고싶다.
 			state = EEnemyState::MOVE;
+			anim->animState = state;
+			anim->bAttackPlay = false;
 			PRINT_LOG(TEXT("MOVE"));
 		}
 		else // 그렇지 않다면
 		{
 			//	공격하고싶다.
 			PRINT_LOG(TEXT("ATTACK!!!"));
+			anim->bAttackPlay = true;
 		}
 
 		currentTime = 0;

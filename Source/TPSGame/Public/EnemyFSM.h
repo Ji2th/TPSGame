@@ -57,4 +57,7 @@ public:
 
 	int hp = 3;
 
+	UPROPERTY(EditAnywhere)
+	class UEnemyAnim* anim;
+
 };
