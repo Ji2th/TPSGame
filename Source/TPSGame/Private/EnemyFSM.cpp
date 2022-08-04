@@ -149,7 +149,8 @@ void UEnemyFSM::OnTakeDamage()
 		state = EEnemyState::DIE;
 		anim->PlayDamageAnimation(TEXT("Die"));
 		// 충돌체를 끈다.
-		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		auto capsule = me->GetCapsuleComponent();
+		capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	else
 	{
