@@ -21,4 +21,13 @@ public:
 	// 애니메이션에서 공격대기에서 공격으로 전환하는 조건
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bAttackPlay;
+
+	UFUNCTION(BlueprintCallable)
+	void OnAttackFinished();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayDamageAnimation(FName sectionName);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bDiePlay;
 };

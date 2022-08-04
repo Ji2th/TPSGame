@@ -3,3 +3,7 @@
 
 #include "EnemyAnim.h"
 
+void UEnemyAnim::OnAttackFinished()
+{
+	bAttackPlay = false;
+}

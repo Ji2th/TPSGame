@@ -7,6 +7,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "Enemy.h"
 #include "EnemyAnim.h"
+#include <Components/CapsuleComponent.h>
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -116,12 +117,28 @@ void UEnemyFSM::TickAttack()
 
 void UEnemyFSM::TickDamage()
 {
+	// 시간이흐르다가 데미지지연시간을 초과하면 이동상태로 전이하고싶다.
+	currentTime += GetWorld()->GetDeltaSeconds();
+	if (currentTime > damageDelayTime)
+	{
+		currentTime = 0;
+		state = EEnemyState::MOVE;
+		anim->animState = state;
+	}
 }
-
 void UEnemyFSM::TickDie()
 {
+	if (true == anim->bDiePlay)
+	{
+		// 시간이흐르다가 죽음지연시간을 초과하면 파괴되고싶다.
+		currentTime += GetWorld()->GetDeltaSeconds();
+		if (currentTime > dieDelayTime)
+		{
+			currentTime = 0;
+			me->Destroy();
+		}
+	}
 }
-
 void UEnemyFSM::OnTakeDamage()
 {
 	// 플레이어가 나를 공격하면 함수를 호출해서 체력을 1 감소시키고싶다.
@@ -129,7 +146,19 @@ void UEnemyFSM::OnTakeDamage()
 	// 만약 체력이 0이되면 죽고싶다.
 	if (hp <= 0)
 	{
-		me->Destroy();
+		state = EEnemyState::DIE;
+		anim->PlayDamageAnimation(TEXT("Die"));
+		// 충돌체를 끈다.
+		me->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+	else
+	{
+		state = EEnemyState::DAMAGE;
+		// 랜덤으로 리액션 동작을 결정하고싶다.
+		int index = FMath::RandRange(0, 1);
+		FString sectionName = FString::Printf(TEXT("Default%d"), index);
+		anim->PlayDamageAnimation(FName(*sectionName));
+	}
+	currentTime = 0;
 }
 

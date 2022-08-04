@@ -43,7 +43,13 @@ public:
 	float idleDelayTime = 1;
 	float attackRange = 300;
 	// 공격상태가 되었을때 시간이 흐르다가 공격대기시간을 초과하면 공격하고싶다.
+	UPROPERTY(EditAnywhere)
 	float attackDelayTime = 1;
+	UPROPERTY(EditAnywhere)
+	float damageDelayTime = 1;
+	UPROPERTY(EditAnywhere)
+	float dieDelayTime = 2;
+
 	class ATPSPlayer* target;
 		
 	void TickIdle();
@@ -60,4 +66,5 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UEnemyAnim* anim;
 
+	
 };
