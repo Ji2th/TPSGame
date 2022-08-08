@@ -68,16 +68,23 @@ void UEnemyFSM::TickIdle()
 		// 목적지를 정하고
 		/*target = Cast<ATPSPlayer>(UGameplayStatics::GetActorOfClass(GetWorld(), ATPSPlayer::StaticClass()));*/
 		target = Cast<ATPSPlayer>(GetWorld()->GetFirstPlayerController()->GetPawn());
-		// 이동상태로 전이하고싶다.
-		state = EEnemyState::MOVE;
-		anim->animState = state;
-		PRINT_LOG(TEXT("MOVE"));
-		GetRandomLocationInNavMesh(me->GetActorLocation(), 500, randLocation);
+		if (target)
+		{
+			// 이동상태로 전이하고싶다.
+			state = EEnemyState::MOVE;
+			anim->animState = state;
+			PRINT_LOG(TEXT("MOVE"));
+			GetRandomLocationInNavMesh(me->GetActorLocation(), 500, randLocation);
+		}
 	}
 }
 
 void UEnemyFSM::TickMove()
 {
+	if (nullptr == target)
+	{
+		return;
+	}
 	FVector destination = target->GetActorLocation();
 	// 목적지를 향하는 방향을 만들고 target - me
 	FVector dir = destination - me->GetActorLocation();
@@ -92,13 +99,15 @@ void UEnemyFSM::TickMove()
 	moveReq.SetAcceptanceRadius(3);
 	moveReq.SetGoalLocation(destination);
 
+	ai->BuildPathfindingQuery(moveReq, query);
+
 	// 길위를 검색해서 
 	auto r = ns->FindPathSync(query);
 	// destination이 내가 생각하는 길위에 있다면
 	if (r.Result == ENavigationQueryResult::Success)
 	{
 		//	플레이어를 향해 이동하고싶다.
-		ai->MoveToLocation(destination);
+		ai->MoveToLocation(destination, 100);
 	}
 	// 그렇지 않다면
 	else
@@ -112,9 +121,7 @@ void UEnemyFSM::TickMove()
 			// 목적지에 이미 도착으니 새로운 목적지를 지정하고싶다.
 			GetRandomLocationInNavMesh(me->GetActorLocation(), 500, randLocation);
 		}
-
 	}
-
 
 	// 목적지와 나의 거리를 구하고
 	float dist = dir.Size();
@@ -159,9 +166,7 @@ void UEnemyFSM::TickAttack()
 		}
 		currentTime = 0;
 	}
-	me->SetActorRotation(
-		FMath::Lerp(me->GetActorRotation(), rot, 0.3f)
-	);
+	me->SetActorRotation(FMath::Lerp(me->GetActorRotation(), rot, 0.3f));
 }
 
 void UEnemyFSM::TickDamage()
@@ -219,7 +224,7 @@ bool UEnemyFSM::GetRandomLocationInNavMesh(FVector origin, float radius, FVector
 
 	FNavLocation loc;
 
-	bool result = ns->GetRandomPointInNavigableRadius(origin, radius, loc);
+	bool result = ns->GetRandomReachablePointInRadius(origin, radius, loc);
 
 	if (true == result)
 	{

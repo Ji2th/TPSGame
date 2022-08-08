@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,8 +23,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// ·£´ıÇÑ ½Ã°£¿¡ ÀûÀ» »ı¼ºÇÏ°í½Í´Ù.
-	// ÀûÀÇ À§Ä¡´Â SpawnListÀÇ ÀÓÀÇÀÇ ÇÑ °÷À¸·Î Á¤ÇÏ°í½Í´Ù.
+	// ëœë¤í•œ ì‹œê°„ì— ì ì„ ìƒì„±í•˜ê³ ì‹¶ë‹¤.
+	// ì ì˜ ìœ„ì¹˜ëŠ” SpawnListì˜ ì„ì˜ì˜ í•œ ê³³ìœ¼ë¡œ ì •í•˜ê³ ì‹¶ë‹¤.
 	UPROPERTY(EditAnywhere)
 	float min;
 	UPROPERTY(EditAnywhere)
