@@ -66,5 +66,15 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UEnemyAnim* anim;
 
-	
+	UPROPERTY(EditAnywhere)
+	class AAIController* ai;
+
+	// 길 위에 플레이어를 찾지 못했을 때 이동할 목적지
+	FVector randLocation;
+
+	// 랜덤 목적지를 생성하는 기능
+	// 현재위치, 반경, 성공했다면 담아줄 변수
+	bool GetRandomLocationInNavMesh(FVector origin, float radius, FVector& outLoc);
+
+	FRotator rot;
 };

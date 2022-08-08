@@ -19,6 +19,8 @@ public:
 	EEnemyState animState;
 
 	// 애니메이션에서 공격대기에서 공격으로 전환하는 조건
+	// Edit / Visible
+	// Anywhere / DefaultOnly / InstanceOnly
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bAttackPlay;
 

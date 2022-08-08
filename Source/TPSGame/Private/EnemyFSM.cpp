@@ -8,6 +8,9 @@
 #include "Enemy.h"
 #include "EnemyAnim.h"
 #include <Components/CapsuleComponent.h>
+#include <AIController.h>
+#include <NavigationSystem.h>
+#include <Kismet/KismetMathLibrary.h>
 
 // Sets default values for this component's properties
 UEnemyFSM::UEnemyFSM()
@@ -30,6 +33,11 @@ void UEnemyFSM::BeginPlay()
 	me = Cast<AEnemy>(GetOwner());
 
 	anim = Cast<UEnemyAnim>(me->GetMesh()->GetAnimInstance());
+
+	// 컨트롤러를 가져와서 ai에 담고싶다.
+
+	ai = Cast<AAIController>(me->GetController());
+
 }
 
 
@@ -64,15 +72,49 @@ void UEnemyFSM::TickIdle()
 		state = EEnemyState::MOVE;
 		anim->animState = state;
 		PRINT_LOG(TEXT("MOVE"));
+		GetRandomLocationInNavMesh(me->GetActorLocation(), 500, randLocation);
 	}
 }
 
 void UEnemyFSM::TickMove()
 {
+	FVector destination = target->GetActorLocation();
 	// 목적지를 향하는 방향을 만들고 target - me
-	FVector dir = target->GetActorLocation() - me->GetActorLocation();
+	FVector dir = destination - me->GetActorLocation();
 	// 그 방향으로 이동하고싶다.
-	me->AddMovementInput(dir.GetSafeNormal());
+	//me->AddMovementInput(dir.GetSafeNormal());
+
+	// 길찾기를 하기위한 준비를 하고싶다.
+	auto ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+	FAIMoveRequest moveReq;
+	FPathFindingQuery query;
+
+	moveReq.SetAcceptanceRadius(3);
+	moveReq.SetGoalLocation(destination);
+
+	// 길위를 검색해서 
+	auto r = ns->FindPathSync(query);
+	// destination이 내가 생각하는 길위에 있다면
+	if (r.Result == ENavigationQueryResult::Success)
+	{
+		//	플레이어를 향해 이동하고싶다.
+		ai->MoveToLocation(destination);
+	}
+	// 그렇지 않다면
+	else
+	{
+		//	랜덤위치로 이동하고싶다.
+		auto result = ai->MoveToLocation(randLocation);
+		// 목적지에 도착했다 or 목적지가 길위가 아니라면
+		if (result == EPathFollowingRequestResult::AlreadyAtGoal ||
+			result == EPathFollowingRequestResult::Failed)
+		{
+			// 목적지에 이미 도착으니 새로운 목적지를 지정하고싶다.
+			GetRandomLocationInNavMesh(me->GetActorLocation(), 500, randLocation);
+		}
+
+	}
+
 
 	// 목적지와 나의 거리를 구하고
 	float dist = dir.Size();
@@ -84,11 +126,13 @@ void UEnemyFSM::TickMove()
 		anim->animState = state;
 		currentTime = attackDelayTime;
 		PRINT_LOG(TEXT("ATTACK"));
+		ai->StopMovement();
 	}
 }
 
 void UEnemyFSM::TickAttack()
 {
+
 	// 공격상태가 되었을때 시간이 흐르다가 
 	currentTime += GetWorld()->GetDeltaSeconds();
 	// 공격대기시간을 초과하면 공격하고싶다.
@@ -103,16 +147,21 @@ void UEnemyFSM::TickAttack()
 			anim->animState = state;
 			anim->bAttackPlay = false;
 			PRINT_LOG(TEXT("MOVE"));
+			GetRandomLocationInNavMesh(me->GetActorLocation(), 500, randLocation);
 		}
 		else // 그렇지 않다면
 		{
 			//	공격하고싶다.
 			PRINT_LOG(TEXT("ATTACK!!!"));
 			anim->bAttackPlay = true;
-		}
 
+			rot = UKismetMathLibrary::FindLookAtRotation(me->GetActorLocation(), target->GetActorLocation());
+		}
 		currentTime = 0;
 	}
+	me->SetActorRotation(
+		FMath::Lerp(me->GetActorRotation(), rot, 0.3f)
+	);
 }
 
 void UEnemyFSM::TickDamage()
@@ -141,6 +190,7 @@ void UEnemyFSM::TickDie()
 }
 void UEnemyFSM::OnTakeDamage()
 {
+	ai->StopMovement();
 	// 플레이어가 나를 공격하면 함수를 호출해서 체력을 1 감소시키고싶다.
 	hp--;
 	// 만약 체력이 0이되면 죽고싶다.
@@ -161,5 +211,21 @@ void UEnemyFSM::OnTakeDamage()
 		anim->PlayDamageAnimation(FName(*sectionName));
 	}
 	currentTime = 0;
+}
+
+bool UEnemyFSM::GetRandomLocationInNavMesh(FVector origin, float radius, FVector& outLoc)
+{
+	auto ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+
+	FNavLocation loc;
+
+	bool result = ns->GetRandomPointInNavigableRadius(origin, radius, loc);
+
+	if (true == result)
+	{
+		outLoc = loc.Location;
+	}
+
+	return result;
 }
 
