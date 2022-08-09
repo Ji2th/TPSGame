@@ -9,8 +9,10 @@
 #include <Blueprint/UserWidget.h>
 #include "Enemy.h"
 #include "EnemyFSM.h"
-#include <GameFramework/CharacterMovementComponent.h>
 #include "TPSPlayerAnim.h"
+#include "PlayerMoveComponent.h"
+#include "PlayerFireComponent.h"
+#include "TPSGame.h"
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -66,6 +68,9 @@ ATPSPlayer::ATPSPlayer()
 		sniperMesh->SetRelativeLocationAndRotation(FVector(-47, 7, 1), FRotator(0, 90, 0));
 		sniperMesh->SetRelativeScale3D(FVector(0.15f));
 	}
+
+	moveComp = CreateDefaultSubobject<UPlayerMoveComponent>(TEXT("moveComp"));
+	//fireComp = CreateDefaultSubobject<UPlayerFireComponent>(TEXT("fireComp"));
 }
 
 // Called when the game starts or when spawned
@@ -73,8 +78,7 @@ void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// 시작할 때 최대속력을 walkSpeed로 하고싶다.
-	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+	PRINT_LOG(TEXT("test"));
 
 	// 태어날 때 SniperUI공장에서 SniperUI를 만들어서 가지고 있고싶다.
 	sniperUI = CreateWidget(GetWorld(), sniperUIFactory);
@@ -90,17 +94,7 @@ void ATPSPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// dir방향으로 이동하고싶다.
-	dir = FTransform(GetControlRotation()).TransformVector(dir);
-	dir.Z = 0; // 수직으로 아래를 보더라도 이동하려면...
-	dir.Normalize();
-	//// P = P0 + vt
-	//FVector velocity = dir * walkSpeed;
-	//SetActorLocation(GetActorLocation() + velocity * DeltaTime);
-
-	AddMovementInput(dir);
-
-	dir = FVector::ZeroVector;
+	
 
 }
 
@@ -109,11 +103,9 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &ATPSPlayer::OnAxisLookUp);
-	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ATPSPlayer::OnAxisTurn);
-	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ATPSPlayer::OnAxisMoveForward);
-	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ATPSPlayer::OnAxisMoveRight);
-	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ATPSPlayer::OnActionJump);
+	moveComp->PlayerInputBinding(PlayerInputComponent);
+
+
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ATPSPlayer::OnActionFire);
 	PlayerInputComponent->BindAction(TEXT("ChooseGun"), IE_Pressed, this, &ATPSPlayer::OnActionChooseGun);
 	PlayerInputComponent->BindAction(TEXT("ChooseSniper"), IE_Pressed, this, &ATPSPlayer::OnActionChooseSniper);
@@ -121,38 +113,10 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Pressed, this, &ATPSPlayer::OnActionZoomIn);
 	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Released, this, &ATPSPlayer::OnActionZoomOut);
 
-	PlayerInputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &ATPSPlayer::OnActionRunPressed);
-	PlayerInputComponent->BindAction(TEXT("Run"), IE_Released, this, &ATPSPlayer::OnActionRunReleased);
+	
 }
 
-void ATPSPlayer::OnAxisLookUp(float value)
-{
-	AddControllerPitchInput(value);
-}
 
-void ATPSPlayer::OnAxisTurn(float value)
-{
-	AddControllerYawInput(value);
-}
-
-void ATPSPlayer::OnAxisMoveForward(float value) // -1 1
-{
-	// 입력받은 value를 dir의 X값에 대입하고싶다.
-	// lValue : dir
-	// rValue : value
-	dir.X = value;
-}
-
-void ATPSPlayer::OnAxisMoveRight(float value) // -1 1
-{
-	// 입력받은 value를 dir의 Y값에 대입하고싶다.
-	dir.Y = value;
-}
-
-void ATPSPlayer::OnActionJump()
-{
-	Jump();
-}
 
 void ATPSPlayer::OnActionFire()
 {
@@ -248,17 +212,5 @@ void ATPSPlayer::OnActionZoomOut()
 		sniperUI->RemoveFromParent();
 		crosshairUI->AddToViewport();
 	}
-}
-
-void ATPSPlayer::OnActionRunPressed()
-{
-	GetCharacterMovement()->MaxWalkSpeed = runSpeed;
-
-}
-
-void ATPSPlayer::OnActionRunReleased()
-{
-	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
-
 }
 

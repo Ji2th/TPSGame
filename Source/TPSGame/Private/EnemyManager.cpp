@@ -22,6 +22,7 @@ void AEnemyManager::BeginPlay()
 
 void AEnemyManager::MakeEnemy()
 {
+
 	// 스폰목록에 있는 항목중 하나를 랜덤으로 선택하고싶다.
 	int randIndex = FMath::RandRange(0, spawnList.Num() - 1);
 	auto actor = spawnList[randIndex];
