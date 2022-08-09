@@ -4,15 +4,10 @@
 #include <GameFramework/SpringArmComponent.h>
 #include <Camera/CameraComponent.h>
 #include <Components/SkeletalMeshComponent.h>
-#include "Bullet.h"
-#include <Kismet/GameplayStatics.h>
-#include <Blueprint/UserWidget.h>
-#include "Enemy.h"
-#include "EnemyFSM.h"
-#include "TPSPlayerAnim.h"
 #include "PlayerMoveComponent.h"
 #include "PlayerFireComponent.h"
 #include "TPSGame.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 ATPSPlayer::ATPSPlayer()
@@ -70,32 +65,21 @@ ATPSPlayer::ATPSPlayer()
 	}
 
 	moveComp = CreateDefaultSubobject<UPlayerMoveComponent>(TEXT("moveComp"));
-	//fireComp = CreateDefaultSubobject<UPlayerFireComponent>(TEXT("fireComp"));
+	fireComp = CreateDefaultSubobject<UPlayerFireComponent>(TEXT("fireComp"));
 }
 
 // Called when the game starts or when spawned
 void ATPSPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	PRINT_LOG(TEXT("test"));
-
-	// 태어날 때 SniperUI공장에서 SniperUI를 만들어서 가지고 있고싶다.
-	sniperUI = CreateWidget(GetWorld(), sniperUIFactory);
-	// 태어날 때 CrosshairUI공장에서 CrosshairUI를 만들어서 가지고 있고싶다.
-	crosshairUI = CreateWidget(GetWorld(), crosshairUIFactory);
-	JumpMaxCount = 2;
-
-	OnActionChooseSniper();
+	// 시작할 때 체력을 최대체력으로 하고싶다.
+	hp = maxHP;
 }
 
 // Called every frame
 void ATPSPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	
-
 }
 
 // Called to bind functionality to input
@@ -104,113 +88,25 @@ void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	moveComp->PlayerInputBinding(PlayerInputComponent);
-
-
-	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ATPSPlayer::OnActionFire);
-	PlayerInputComponent->BindAction(TEXT("ChooseGun"), IE_Pressed, this, &ATPSPlayer::OnActionChooseGun);
-	PlayerInputComponent->BindAction(TEXT("ChooseSniper"), IE_Pressed, this, &ATPSPlayer::OnActionChooseSniper);
-
-	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Pressed, this, &ATPSPlayer::OnActionZoomIn);
-	PlayerInputComponent->BindAction(TEXT("Zoom"), IE_Released, this, &ATPSPlayer::OnActionZoomOut);
-
-	
+	fireComp->PlayerInputBinding(PlayerInputComponent);
 }
 
-
-
-void ATPSPlayer::OnActionFire()
+void ATPSPlayer::OnHitEvent()
 {
-	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(cameraShake);
-
-	// 메시로부터 애니메이션인스턴스를 가져와서 공격애니메이션을 호출하고싶다.
-	auto anim = Cast<UTPSPlayerAnim>(GetMesh()->GetAnimInstance());
-	anim->PlayAttackAnimation();
-
-	if (bChooseGun)
+	// 체력을 1 감소하고싶다.
+	hp--;
+	PRINT_LOG(TEXT("OnHitEvent : %d"), hp);
+	// 만약 체력이 0이하라면
+	if (hp <= 0)
 	{
-		// gun을 고른 상태에서 총을 쏘고싶다.
-		FTransform firePosition = gunMesh->GetSocketTransform(TEXT("FirePosition"));
-		GetWorld()->SpawnActor<ABullet>(bulletFactory, firePosition);
-	}
-	else
-	{
-		// sniper를 고른 상태에서 총을 쏘고싶다. 
-		// 시작점 끝점
-		FVector start = cameraComp->GetComponentLocation();
-		FVector end = start + cameraComp->GetForwardVector() * 100000;
-		// 부딪힌곳의 정보
-		FHitResult hitInfo;
-		FCollisionQueryParams params;
-		params.AddIgnoredActor(this);
-
-		bool isHit = GetWorld()->LineTraceSingleByChannel(hitInfo, start, end, ECC_Visibility, params);
-
-		if (isHit)
-		{
-			// 총알자국공장에서 총알자국을 SpawnEmitter하고 부딪힌 그곳에 배치하고싶다.
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), bulletImpactFactory, hitInfo.ImpactPoint);
-
-			// 만약에 부딪힌 물체가 물리를 작용하고 있다면 그물체에게 힘을 가하고싶다.
-			auto hitComp = hitInfo.GetComponent();
-			if (hitComp && hitComp->IsSimulatingPhysics())
-			{
-				hitComp->AddForceAtLocation(hitComp->GetMass() * -hitInfo.ImpactNormal * 100000, hitInfo.ImpactPoint);
-			}
-
-			// 만약 부딪힌 상대가 AEnemy라면
-			auto enemy = Cast<AEnemy>(hitInfo.GetActor());
-			if (nullptr != enemy)
-			{
-				// AEnemy의 OnTakeDamage()를 호출하고싶다.
-				auto comp = enemy->GetComponentByClass(UEnemyFSM::StaticClass());
-				auto fsm = Cast<UEnemyFSM>(comp);
-
-				fsm->OnTakeDamage();
-			}
-		}
-	}
-}
-void ATPSPlayer::OnActionChooseGun()
-{
-	// gun만 보이게 하고싶다.
-	bChooseGun = true;
-	gunMesh->SetVisibility(true);
-	sniperMesh->SetVisibility(false);
-	cameraComp->SetFieldOfView(90);
-
-	crosshairUI->RemoveFromParent();
-	sniperUI->RemoveFromViewport();
-}
-void ATPSPlayer::OnActionChooseSniper()
-{
-	// sniper만 보이게 하고싶다.
-	bChooseGun = false;
-	gunMesh->SetVisibility(false);
-	sniperMesh->SetVisibility(true);
-	// Sniper를 선택하면 CrosshairUI를 보이게 하고싶다.
-	crosshairUI->AddToViewport();
-}
-
-void ATPSPlayer::OnActionZoomIn()
-{
-	// 만약 sniper라면
-	if (false == bChooseGun)
-	{
-		cameraComp->SetFieldOfView(30);
-		// ZoomIn : SniperUI를 보이게 하고싶다. 
-		sniperUI->AddToViewport();
-		crosshairUI->RemoveFromParent();
+		// 게임오버를 로그로 출력!
+		PRINT_LOG(TEXT("Player is dead!!!!"));
+		OnGameOver();
 	}
 }
 
-void ATPSPlayer::OnActionZoomOut()
+void ATPSPlayer::OnGameOver_Implementation()
 {
-	if (false == bChooseGun)
-	{
-		cameraComp->SetFieldOfView(90);
-		// ZoomOut : SniperUI를 보이지 않게 하고싶다. 
-		sniperUI->RemoveFromParent();
-		crosshairUI->AddToViewport();
-	}
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
 }
 

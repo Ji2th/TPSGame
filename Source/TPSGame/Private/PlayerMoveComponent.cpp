@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "PlayerMoveComponent.h"
@@ -14,15 +14,17 @@ void UPlayerMoveComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ½ÃÀÛÇÒ ¶§ ÃÖ´ë¼Ó·ÂÀ» walkSpeed·Î ÇÏ°í½Í´Ù.
+	// ì‹œì‘í•  ë•Œ ìµœëŒ€ì†ë ¥ì„ walkSpeedë¡œ í•˜ê³ ì‹¶ë‹¤.
 	me->GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 }
 
 void UPlayerMoveComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	// dir¹æÇâÀ¸·Î ÀÌµ¿ÇÏ°í½Í´Ù.
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// dirë°©í–¥ìœ¼ë¡œ ì´ë™í•˜ê³ ì‹¶ë‹¤.
 	dir = FTransform(me->GetControlRotation()).TransformVector(dir);
-	dir.Z = 0; // ¼öÁ÷À¸·Î ¾Æ·¡¸¦ º¸´õ¶óµµ ÀÌµ¿ÇÏ·Á¸é...
+	dir.Z = 0; // ìˆ˜ì§ìœ¼ë¡œ ì•„ë˜ë¥¼ ë³´ë”ë¼ë„ ì´ë™í•˜ë ¤ë©´...
 	dir.Normalize();
 
 	me->AddMovementInput(dir);
@@ -55,7 +57,7 @@ void UPlayerMoveComponent::OnAxisTurn(float value)
 
 void UPlayerMoveComponent::OnAxisMoveForward(float value) // -1 1
 {
-	// ÀÔ·Â¹ŞÀº value¸¦ dirÀÇ X°ª¿¡ ´ëÀÔÇÏ°í½Í´Ù.
+	// ì…ë ¥ë°›ì€ valueë¥¼ dirì˜ Xê°’ì— ëŒ€ì…í•˜ê³ ì‹¶ë‹¤.
 	// lValue : dir
 	// rValue : value
 	dir.X = value;
@@ -63,7 +65,7 @@ void UPlayerMoveComponent::OnAxisMoveForward(float value) // -1 1
 
 void UPlayerMoveComponent::OnAxisMoveRight(float value) // -1 1
 {
-	// ÀÔ·Â¹ŞÀº value¸¦ dirÀÇ Y°ª¿¡ ´ëÀÔÇÏ°í½Í´Ù.
+	// ì…ë ¥ë°›ì€ valueë¥¼ dirì˜ Yê°’ì— ëŒ€ì…í•˜ê³ ì‹¶ë‹¤.
 	dir.Y = value;
 }
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -29,16 +29,16 @@ public:
 	void OnAxisLookUp(float value);
 	void OnAxisTurn(float value);
 
-	// Å°¸¦ ÀÔ·Â¹Ş¾Æ¼­ ¹æÇâÀ» ¸¸µé°í ±× ¹æÇâÀ¸·Î ÀÌµ¿ÇÏ°í½Í´Ù.
-	// Á¡ÇÁ ¹öÆ°À» ´©¸£¸é Á¡ÇÁÇÏ°í½Í´Ù.
+	// í‚¤ë¥¼ ì…ë ¥ë°›ì•„ì„œ ë°©í–¥ì„ ë§Œë“¤ê³  ê·¸ ë°©í–¥ìœ¼ë¡œ ì´ë™í•˜ê³ ì‹¶ë‹¤.
+	// ì í”„ ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ ì í”„í•˜ê³ ì‹¶ë‹¤.
 	FVector dir;
 	void OnAxisMoveForward(float value);
 	void OnAxisMoveRight(float value);
 
 	void OnActionJump();
 
-	// ¿ŞÂÊ ½¬ÇÁÆ® ¹öÆ°À» ´©¸£¸é ´Ş¸®°í½Í´Ù. ¶¼¸é °È°í½Í´Ù.
-// ½ÃÀÛÇÒ ¶§ ÃÖ´ë¼Ó·ÂÀ» walkSpeed·Î ÇÏ°í½Í´Ù.
+	// ì™¼ìª½ ì‰¬í”„íŠ¸ ë²„íŠ¼ì„ ëˆ„ë¥´ë©´ ë‹¬ë¦¬ê³ ì‹¶ë‹¤. ë–¼ë©´ ê±·ê³ ì‹¶ë‹¤.
+// ì‹œì‘í•  ë•Œ ìµœëŒ€ì†ë ¥ì„ walkSpeedë¡œ í•˜ê³ ì‹¶ë‹¤.
 	float walkSpeed = 200;
 	float runSpeed = 600;
 	void OnActionRunPressed();

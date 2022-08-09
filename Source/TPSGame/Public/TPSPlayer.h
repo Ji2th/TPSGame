@@ -36,59 +36,33 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UCameraComponent* cameraComp;
 
-
-
-
-	// 마우스 왼쪽 버튼을 누르면 총알공장에서 총알을 만들어서 총구위치에 배치하고싶다.
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class ABullet> bulletFactory;
-
 	UPROPERTY(EditAnywhere)
 	class USkeletalMeshComponent* gunMesh;
 
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* sniperMesh;
 
-	void OnActionFire();
-
-
-	// 1, 2 버튼을 누르면 총이 교체되도록 하고싶다.
-	bool bChooseGun = true;
-	void OnActionChooseGun();
-	void OnActionChooseSniper();
-
-	UPROPERTY(EditAnywhere)
-	class UParticleSystem* bulletImpactFactory;
-
-	void OnActionZoomIn();
-	void OnActionZoomOut();
-
-	// 태어날 때 SniperUI공장에서 SniperUI를 만들어서 가지고 있고싶다.
-	// ZoomIn : SniperUI를 보이게 하고싶다. 
-	// ZoomOut : SniperUI를 보이지 않게 하고싶다. 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UUserWidget> sniperUIFactory;
-
-	UPROPERTY(EditAnywhere)
-	class UUserWidget* sniperUI;
-
-	// 태어날 때 CrosshairUI공장에서 CrosshairUI를 만들어서 가지고 있고싶다.
-	// Sniper를 선택하면 CrosshairUI를 보이게 하고싶다.
-	// ZoomIn : CrosshairUI를 보이지 않게 하고싶다. 
-	// ZoomOut : CrosshairUI를 보이게 하고싶다. 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UUserWidget> crosshairUIFactory= nullptr;
-
-	UPROPERTY(EditAnywhere)
-	class UUserWidget* crosshairUI;
-
-	// 총을 쏘면 카메라를 흔들고싶다.
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UCameraShakeBase> cameraShake;
 
 	UPROPERTY(EditAnywhere)
 	class UPlayerBaseComponent* moveComp;
 
 	UPROPERTY(EditAnywhere)
 	class UPlayerBaseComponent* fireComp;
+
+	// 체력을 만들어서 처리하고싶다.
+	// Enemy가 Player를 공격하면 체력을 1 소모하고싶다.
+	// 체력이 0이하가되면 게임오버를 화면에 출력하고 일시정지 하고싶다.
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int hp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int maxHP = 10;
+
+	UFUNCTION(BlueprintCallable)
+	void OnHitEvent();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void OnGameOver();
+
 };
