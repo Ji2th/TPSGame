@@ -4,6 +4,7 @@
 #include "PlayerMoveComponent.h"
 #include "TPSPlayer.h"
 #include <GameFramework/CharacterMovementComponent.h>
+#include "TPSGame.h"
 
 UPlayerMoveComponent::UPlayerMoveComponent()
 {
@@ -34,6 +35,9 @@ void UPlayerMoveComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UPlayerMoveComponent::PlayerInputBinding(class UInputComponent* PlayerInputComponent)
 {
+	PRINT_LOG(TEXT("UPlayerMoveComponent::PlayerInputBinding"));
+	Super::PlayerInputBinding(PlayerInputComponent);
+
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &UPlayerMoveComponent::OnAxisLookUp);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &UPlayerMoveComponent::OnAxisTurn);
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &UPlayerMoveComponent::OnAxisMoveForward);

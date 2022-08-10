@@ -10,6 +10,7 @@
 #include "Enemy.h"
 #include "EnemyFSM.h"
 #include "Bullet.h"
+#include "TPSGame.h"
 
 void UPlayerFireComponent::BeginPlay()
 {
@@ -31,6 +32,7 @@ void UPlayerFireComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UPlayerFireComponent::PlayerInputBinding(class UInputComponent* PlayerInputComponent)
 {
+	PRINT_LOG(TEXT("UPlayerFireComponent::PlayerInputBinding"));
 	Super::PlayerInputBinding(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &UPlayerFireComponent::OnActionFire);
@@ -100,6 +102,7 @@ void UPlayerFireComponent::OnActionChooseGun()
 {
 	// gun만 보이게 하고싶다.
 	bChooseGun = true;
+	me->OnChooseGun(bChooseGun);
 	me->gunMesh->SetVisibility(true);
 	me->sniperMesh->SetVisibility(false);
 	me->cameraComp->SetFieldOfView(90);
@@ -111,6 +114,7 @@ void UPlayerFireComponent::OnActionChooseSniper()
 {
 	// sniper만 보이게 하고싶다.
 	bChooseGun = false;
+	me->OnChooseGun(bChooseGun); 
 	me->gunMesh->SetVisibility(false);
 	me->sniperMesh->SetVisibility(true);
 	// Sniper를 선택하면 CrosshairUI를 보이게 하고싶다.

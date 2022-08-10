@@ -80,15 +80,22 @@ void ATPSPlayer::BeginPlay()
 void ATPSPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
+
 }
 
 // Called to bind functionality to input
 void ATPSPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	PRINT_LOG(TEXT("ATPSPlayer::SetupPlayerInputComponent"));
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	moveComp->PlayerInputBinding(PlayerInputComponent);
-	fireComp->PlayerInputBinding(PlayerInputComponent);
+	// 델리게이트를 이용해서 moveComp와 fireComp의 PlayerInputBinding함수를 호출하고싶다.
+	onPlayerInputBindingDelegate.Broadcast(PlayerInputComponent);
+
+	//moveComp->PlayerInputBinding(PlayerInputComponent);
+	//fireComp->PlayerInputBinding(PlayerInputComponent);
 }
 
 void ATPSPlayer::OnHitEvent()

@@ -6,6 +6,10 @@
 #include "GameFramework/Character.h"
 #include "TPSPlayer.generated.h"
 
+
+DECLARE_MULTICAST_DELEGATE_OneParam(OnPlayerInputBindingDelegate, class UInputComponent*);
+
+
 UCLASS()
 class TPSGAME_API ATPSPlayer : public ACharacter
 {
@@ -27,6 +31,9 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
+
+	OnPlayerInputBindingDelegate onPlayerInputBindingDelegate;
+
 	// SpringArmComponent, CameraComponent 를 만들어서 붙이고싶다.
 	// CameraComponent을 SpringArmComponent의 자식으로 붙이고싶다.
 
@@ -65,4 +72,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnGameOver();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnChooseGun(bool bGrenadeGun);
 };
